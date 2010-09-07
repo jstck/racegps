@@ -1,0 +1,4 @@
+<sector lap="0" id="s1" time="39.307794"/>
+<sector lap="0" id="s2" time="23.317795"/>
+<sector lap="0" id="lap" time="104.601822"/>
+<sector lap="1" id="s3" time="41.976233"/>

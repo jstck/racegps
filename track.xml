@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<track>
+	<name>Mantorp</name>
+	<length>3200.0</length>
+	
+	<offset x="00.001" y="-0.001" />
+
+	<!-- minimum laptime in seconds (or [HH:]MM:SS.sss) -->
+	<mintime>80.0</mintime>
+	
+	<waypoints>
+		<waypoint name="Finish" id="finish">
+			<line>
+<!--
+				<coordinate x="6471872.106363" y="1469490.038138"/>
+				<coordinate x="6471889.173009" y="1469482.294907"/>			
+-->
+				<coordinate x="6471865" y="1469492"/>
+				<coordinate x="6471905" y="1469475" />
+			</line>
+			<zone id="before">
+				<width>100</width>
+<!--				<polygon>
+					<coordinate x="6471866.186948" y="1469436.027643"/>
+					<coordinate x="6471850.251100" y="1469443.032634"/>
+					<coordinate x="6471872.106363" y="1469490.038138"/>
+					<coordinate x="6471889.173009" y="1469482.294907"/>
+				</polygon>
+-->
+			</zone>
+			<zone id="after">
+				<width>100</width>
+<!--
+				<polygon>
+					<coordinate x="6471889.173009" y="1469482.294907"/>
+					<coordinate x="6471872.106363" y="1469490.038138"/>
+					<coordinate x="6471888.0"        y="1469520.0"/>
+					<coordinate x="6471904.598967" y="1469517.088007"/>
+				</polygon>
+				-->
+			</zone>
+		</waypoint>
+
+
+		<waypoint name="Innan rakan" id="wp1">
+			<line>
+				<coordinate x="6471985.544059" y="1469751.816192"/>
+				<coordinate x="6471959.597785" y="1469780.662023"/>
+			</line>
+			<zone id="before">
+				<polygon>
+<!--					<coordinate x="6471959.597785" y="1469780.662023"/>
+					<coordinate x="6471985.544059" y="1469751.816192"/>
+					<coordinate x="6472021.968048" y="1469759.317797"/>
+					<coordinate x="6472030.565693" y="1469784.371302"/>
+					<coordinate x="6471978.234277" y="1469804.638366"/> -->
+					
+
+					<coordinate x="6471978.234277" y="1469804.638366"/>
+					<coordinate x="6472030.565693" y="1469784.371302"/>
+					<coordinate x="6472021.968048" y="1469759.317797"/>
+					<coordinate x="6471985.544059" y="1469751.816192"/>
+					<coordinate x="6471959.597785" y="1469780.662023"/>
+
+
+
+
+				</polygon>
+			</zone>
+			<zone id="after">
+				<width>100</width>
+			</zone>
+		</waypoint>
+	
+
+		<waypoint name="Efter rakan" id="wp2">
+			<line>
+				<coordinate x="6471597.898138" y="1468983.047495"/>
+				<coordinate x="6471551.555839" y="1469004.132350"/>
+			</line>
+			<zone id="before">
+				<width>80</width>				
+			</zone>
+			<zone id="after">
+				<width>80</width>
+			</zone>
+		</waypoint>
+
+	
+	</waypoints>
+
+	<sectors>
+		<sector name="Lap" id="lap" from="finish" to="finish" mintime="50" />
+		<sector name="Part1" id="s1" from="finish" to="wp1" mintime="20" />
+		<sector name="Part2" id="s2" from="wp1" to="wp2" mintime="20" />
+		<sector name="Part3" id="s3" from="wp2" to="finish" mintime="20" />
+	</sectors>
+	
+	<zones>
+		<zone name="The Pit" id="pit">
+			<polygon>
+				<coordinate x="12938133" y="8976896" />
+				<coordinate x="12938133" y="8976846" />								
+				<coordinate x="12938123" y="8976846" />
+			</polygon>
+		</zone>
+		<zone name="Refuelling station" id="refuel">
+			<polygon>
+				<coordinate x="12938133" y="8976896" />
+				<coordinate x="12938133" y="8976846" />								
+				<coordinate x="12938123" y="8976846" />
+			</polygon>
+		</zone>
+	</zones>
+
+</track>

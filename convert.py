@@ -71,29 +71,31 @@ params_rt90_25V_LM = {
 	'false_easting': 1500000.0
 }
 
-#Do lots of precalculations of used constants
+#Do precalculations of used constants for ellipsoid
 def precalc(params):
+	if 'precalc' in params: return
+	
 	e2 = params['flattening'] * (2.0 - params['flattening'])
 	n = params['flattening'] / (2.0 - params['flattening'])
-	a_roof = params['axis'] / (1.0 + n) * (1.0 + n*n/4.0 + math.pow(n, 4)/64.0)
+	a_roof = params['axis'] / (1.0 + n) * (1.0 + n**2/4.0 + n**4/64.0)
 	A = e2
-	B = (5.0*e2*e2 - math.pow(e2, 3)) / 6.0
-	C = (104.0*math.pow(e2, 3) - 45.0*math.pow(e2, 4)) / 120.0
-	D = (1237.0*math.pow(e2, 4)) / 1260.0
-	beta1 = n/2.0 - 2.0*n*n/3.0 + 5.0*math.pow(n, 3)/16.0 + 41.0*math.pow(n, 4)/180.0
-	beta2 = 13.0*n*n/48.0 - 3.0*math.pow(n, 3)/5.0 + 557.0*math.pow(n, 4)/1440.0
-	beta3 = 61.0*math.pow(n, 3)/240.0 - 103.0*math.pow(n, 4)/140.0
-	beta4 = 49561.0*math.pow(n, 4)/161280.0
+	B = (5.0*e2**2 - e2**3) / 6.0
+	C = (104.0*e2**3 - 45.0*e2**4) / 120.0
+	D = (1237.0*e2**4) / 1260.0
+	beta1 = n/2.0 - 2.0*n**2/3.0 + 5.0*n**3/16.0 + 41.0*n**4/180.0
+	beta2 = 13.0*n**2/48.0 - 3.0*n**3/5.0 + 557.0*n**4/1440.0
+	beta3 = 61.0*n**3/240.0 - 103.0*n**4/140.0
+	beta4 = 49561.0*n**4/161280.0
 
-	delta1 = n/2.0 - 2.0*n*n/3.0 + 37.0*n*n*n/96.0 - n*n*n*n/360.0
-	delta2 = n*n/48.0 + n*n*n/15.0 - 437.0*n*n*n*n/1440.0
-	delta3 = 17.0*n*n*n/480.0 - 37*n*n*n*n/840.0
-	delta4 = 4397.0*n*n*n*n/161280.0
+	delta1 = n/2.0 - 2.0*n**2/3.0 + 37.0*n**3/96.0 - n**4/360.0
+	delta2 = n**2/48.0 + n**3/15.0 - 437.0*n**4/1440.0
+	delta3 = 17.0*n**3/480.0 - 37*n**4/840.0
+	delta4 = 4397.0*n**4/161280.0
 	
-	Astar = e2 + e2*e2 + e2*e2*e2 + e2*e2*e2*e2
-	Bstar = -(7.0*e2*e2 + 17.0*e2*e2*e2 + 30.0*e2*e2*e2*e2) / 6.0
-	Cstar = (224.0*e2*e2*e2 + 889.0*e2*e2*e2*e2) / 120.0
-	Dstar = -(4279.0*e2*e2*e2*e2) / 1260.0	
+	Astar = e2 + e2**2 + e2**3 + e2**4
+	Bstar = -(7.0*e2**2 + 17.0*e2**3 + 30.0*e2**4) / 6.0
+	Cstar = (224.0*e2**3 + 889.0*e2**4) / 120.0
+	Dstar = -(4279.0*e2**4) / 1260.0	
 
 	params['e2'] = e2
 	params['n'] = n
@@ -131,9 +133,6 @@ def rad2deg(rad):
 	return 180.0 / math.pi * rad
 
 #Convert degree,minute,second to just degree
-def dmstodeg(l):
-	return dmstodeg(l[0], l[1], l[2])
-	
 def dmstodeg(d, m, s):
 	if d >= 0:
 		return float(d) + float(m) / 60.0 + float(s) / 3600.0
@@ -145,9 +144,8 @@ def dmstodeg(d, m, s):
 #parameter set
 def geodetic_to_grid(latitude, longitude, params=params_rt90_25V):
 	
-	#Make sure precalculated values are precalculated.
-	if not 'precalc' in params:
-		precalc(params)
+	#Make sure precalculated values are precalculated (only done once per param set).
+	precalc(params)
 	
 	#Is this where lat_of_origin goes? Always set to 0.0, never used. Plus or minus?
 	#latitude = latitude + params['lat_of_origin']
@@ -159,9 +157,9 @@ def geodetic_to_grid(latitude, longitude, params=params_rt90_25V):
 	lambdaL = deg2rad(longitude) #'lambda' is reserved
 	lambda_zero = deg2rad(params['central_meridian'])
 	phi_star = phi - sin_phi * cos_phi * (params['A'] +
-		params['B'] * sin_phi * sin_phi +
-		params['C'] * math.pow(sin_phi, 4) +
-		params['D'] * math.pow(sin_phi, 6))
+		params['B'] * sin_phi**2 +
+		params['C'] * sin_phi**4 +
+		params['D'] * sin_phi**6)
 	delta_lambda = lambdaL - lambda_zero
 	xi_prim = math.atan(math.tan(phi_star) / math.cos(delta_lambda))
 	eta_prim = atanh(math.cos(phi_star) * math.sin(delta_lambda))
@@ -211,9 +209,9 @@ def grid_to_geodetic(x, y, params=params_rt90_25V):
 	lon_radian = lambda_zero + delta_lambda
 	lat_radian = phi_star + math.sin(phi_star) * math.cos(phi_star) * (
 		params['Astar'] + 
-		params['Bstar']*math.pow(math.sin(phi_star), 2) + 
-		params['Cstar']*math.pow(math.sin(phi_star), 4) + 
-		params['Dstar']*math.pow(math.sin(phi_star), 6)
+		params['Bstar']*math.sin(phi_star)**2 + 
+		params['Cstar']*math.sin(phi_star)**4 + 
+		params['Dstar']*math.sin(phi_star)**6
 	) 
 	lat = rad2deg(lat_radian)
 	lon = rad2deg(lon_radian)

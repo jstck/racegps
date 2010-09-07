@@ -43,10 +43,11 @@ class Vector:
 		return Vector(self.y, -self.x)
 
 	def length(self):
-		return sqrt(self.x*self.x + self.y*self.y)
+		return sqrt(self.x**2 + self.y**2)
 
 	def unit(self):
 		l = self.length()
+		if(l==0): return Vector(0, 0)
 		return Vector(self.x/l, self.y/l)
 
 	def __str__(self):
@@ -78,7 +79,7 @@ class Coordinate:
 	def distancetopoint(self, p):
 		dx = abs(self.x - p.x)
 		dy = abs(self.y - p.y)
-		return sqrt(dx*dx+dy*dy)
+		return sqrt(dx**2+dy**2)
 
 	def speedto(self, p):
 		if p.t - self.t == 0: return 10000 #Infinite speed!
@@ -129,14 +130,15 @@ class Line:
 		p2 = self.p2
 		return abs( (p2.x-p1.x)*(p1.y-p0.y) - (p1.x-p0.x)*(p2.y-p1.y) ) / p1.distancetopoint(p2)
 
-	#Kontrollera om p ligger till vänster om linjen
+	#Check if p is to the left of the line
 	def ontheleft(self,p):
 		return ((p.x-self.p1.x)*(self.p2.y-self.p1.y)+(p.y-self.p1.y)*(self.p1.x-self.p2.x)) >= 0
 
 	def vector(self):
-		return Vector(p2.x-p1.x, p2.y-p1.y)
+		return Vector(self.p2.x-self.p1.x, self.p2.y-self.p1.y)
 
-	#Punkt (och tid) när linjen korsas, givet två punkter (i tid och rum). Förutsätter linjär rörelse.
+	#Coordinate and time when line is crossed, given two points (in space and time)
+	#Assumes linear motion.
 	def transit(self, p1, p2):
 		#http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
 
@@ -145,12 +147,12 @@ class Line:
 
 		d = ( (p4.y-p3.y)*(p2.x-p1.x)-(p4.x-p3.x)*(p2.y-p1.y) )
 		if d==0:
-			ua = 0.5 #Linjerna parallella, gå på mitten för att undvika explosion
+			ua = 0.5 #Lines parallel, use median value to avoid explosion
 		else:
 			ua = ( (p4.x-p3.x)*(p1.y-p3.y)-(p4.y-p3.y)*(p1.x-p3.x) ) / d
 
-		#ua är "del av sträckan från k1 till k2". Om inte 0<=ua<=1 så korsar man inte linjen mellan k1 och k2
-		#vilket betyder att man extrapolerar. Funkar det med.
+		#ua is "part ov distance from p1 to p2. If not 0<=ua<=1 then line is crossed
+		#outside the interval. Extrapolation works too.
 		x = p1.x+ua*(p2.x-p1.x)
 		y = p1.y+ua*(p2.y-p1.y)
 		z = p1.z+ua*(p2.z-p1.z)
@@ -158,10 +160,10 @@ class Line:
 
 		return Coordinate(x,y,z,t)
 
-	#Kontrollera hur en punkt ligger i förhållande till linjen
-	# <0: p ligger vänster om linjen
-	# =0: p ligger på linjen
-	# >0: p ligger till höger om linjen
+	#Check how a point is in relation to line
+	# <0: p to left of line
+	# =0: p on the line
+	# >0: p to the right of line
 	def pointlocation(self, p):
 
 		v = Vector(self.p1, self.p2)
@@ -220,79 +222,10 @@ class Polygon:
 			v = Vector(p, punkt)
 			if v*n < 0: #samma returvärde som Line.pointlocation()
 				return False
+
 		return True
 
 def mstokmh(v):
 	return 3.6*v
 
 
-
-class Checkpoint:
-
-	#En checkpoint som korsar vägen från vänster till höger, med en given bredd
-	def __init__(l, w):
-		self.line = l
-		
-		#Normalvektor till linjen, av längd w
-		n = l.vector().normal().unit() * w
-
-		#Rutan före linjen
-		self.before = Polygon([l.p1, l.p2, l.p2+n, l.p1+n])
-
-		#Rutan efter linjen
-		self.after = Polygon([l.p2, l.p1, l.p1-n, l.p2-n])
-
-		#"ytterrutan"		
-		self.bounds = Polygon([l.p2+n, l.p1+n, l.p1-n, l.p2-n])
-
-
-
-
-coord1 = Coordinate(1234, 5678, 0, 1234.6)
-coord2 = Coordinate(1240, 5689, 0, 1235.7)
-coord3 = Coordinate(1246, 5678, 0, 1236.9)
-
-
-corner1 = Coordinate(1224,5677)
-corner2 = Coordinate(1233,5698)
-corner3 = Coordinate(1244,5679)
-corner4 = Coordinate(1235,5668)
-
-poly1 = Polygon([corner1, corner2, corner3, corner4])
-
-line1 = Line(corner2, corner3)
-
-print coord1.isinside(poly1)
-print coord2.isinside(poly1)
-print coord3.isinside(poly1)
-
-
-print
-
-line2 = Line(Coordinate(10,10),Coordinate(30,10))
-p1 = Coordinate(20,10)
-p2 = Coordinate(20, 15, 3.272727272727272727272727, 12345.67890123456)
-p3 = Coordinate(20, 5)
-
-print line2.pointlocation(p1)
-print line2.pointlocation(p2)
-print line2.pointlocation(p3)
-
-
-
-v = Vector(2, 3)
-print v
-print v.normal()
-print v.unit()
-print v.length()
-print v*2
-print -v
-print
-print p2
-print p2.dump()
-print p2.translate(v.unit(), 17)
-
-v2 = v
-v2.x=17
-print v
-print v2
