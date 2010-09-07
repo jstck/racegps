@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<track>
+	<name>Mantorp</name>
+	<length>3200</length>
+	
+	
+	<waypoints>
+		<waypoint name="Finish" id="finish">
+			<line>
+				<coordinate x="12938123" y="8976876" />
+				<coordinate x="12938133" y="8976876" />				
+			</line>
+			<zone id="before">
+				<width>50</width>
+			</zone>
+			<zone id="after">
+				<line>
+					<coordinate x="12938123" y="8976896" />
+					<coordinate x="12938133" y="8976896" />				
+				</line>
+			</zone>
+		</waypoint>
+
+
+		<waypoint name="Parabolica" id="wp1">
+			<line>
+				<coordinate x="12937133" y="8976856" />
+				<coordinate x="12937123" y="8976856" />
+			</line>
+			<zone id="before">
+				<width>50</width>
+			</zone>
+			<zone id="after">
+				<polygon>
+					<coordinate x="12938123" y="8976896" />
+					<coordinate x="12938133" y="8976896" />
+					<coordinate x="12938133" y="8976846" />								
+					<coordinate x="12938123" y="8976846" />
+				</polygon>
+			</zone>
+		</waypoint>
+	
+
+	
+	</waypoints>
+
+	<sectors>
+		<sector name="Part1" id="s1" from="finish" to="wp1" />
+		<sector name="Part2" id="s2" from="wp1" to="finish" />
+	</sectors>
+	
+	<zones>
+		<zone name="The Pit" id="pit">
+			<polygon>
+				<coordinate x="12938133" y="8976896" />
+				<coordinate x="12938133" y="8976846" />								
+				<coordinate x="12938123" y="8976846" />
+			</polygon>
+		</zone>
+		<zone name="Refuelling station" id="refuel">
+			<polygon>
+				<coordinate x="12938133" y="8976896" />
+				<coordinate x="12938133" y="8976846" />								
+				<coordinate x="12938123" y="8976846" />
+			</polygon>
+		</zone>
+	</zones>
+
+</track>
