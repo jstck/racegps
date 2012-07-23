@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from xml import xpath
-import xml.dom.minidom
+#from xml import xpath
+#import xml.dom.minidom
+
+import libxml2
 
 import vector, convert
 
@@ -62,7 +64,7 @@ class Track():
 	
 	def loadtrack(self, filename):
 
-		doc = xml.dom.minidom.parse(filename)
+		doc = libxml2.parseFile(filename)
 		tracknode = doc.documentElement
 #		doc = libxml2.parseFile(filename)
 
