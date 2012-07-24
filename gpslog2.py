@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import gps
 import time
 import json
